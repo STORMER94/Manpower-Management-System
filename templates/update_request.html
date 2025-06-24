@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Request Details</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="font-inter antialiased text-gray-800 bg-gray-100 min-h-screen flex flex-col lg:flex-row">
+    <!-- Sidebar -->
+    <aside id="sidebar" class="bg-gray-800 text-gray-200 w-64 space-y-6 py-7 px-2 absolute inset-y-0 left-0 transform -translate-x-full lg:relative lg:translate-x-0 transition duration-200 ease-in-out z-50 shadow-lg">
+        <div class="flex items-center justify-between px-4">
+            <a href="/" class="text-white text-2xl font-bold flex items-center">
+                <svg xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-8 h-8 mr-2 text-blue-400">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 12h16.5m-16.5 0a2.25 2.25 0 0 0 2.25 2.25h12.75a2.25 2.25 0 0 0 2.25-2.25M3.75 12a2.25 2.25 0 0 1 2.25-2.25h12.75a2.25 2.25 0 0 1 2.25 2.25m-16.5 0v6.75m16.5-6.75v6.75m-16.5 0a2.25 2.25 0 0 0 2.25 2.25h12.75a2.25 2.25 0 0 0 2.25-2.25M3.75 12v-6.75m16.5 6.75v-6.75" />
+                </svg>
+                MMS
+            </a>
+            <!-- Close button for mobile -->
+            <button id="sidebar-close-btn" class="lg:hidden text-gray-400 hover:text-white focus:outline-none">
+                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+
+        <nav>
+            <a href="/stakeholders" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700 hover:text-white">
+                <span class="mr-2">📊</span> Stakeholder Master
+            </a>
+            <a href="/requests" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700 hover:text-white">
+                <span class="mr-2">📝</span> Request Master
+            </a>
+            <a href="/update-request" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700 hover:text-white bg-gray-700 text-white">
+                <span class="mr-2">✏️</span> Update Request
+            </a>
+            <a href="/update-manhours" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700 hover:text-white">
+                <span class="mr-2">⏰</span> Update Man-hours
+            </a>
+            <a href="/report" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700 hover:text-white">
+                <span class="mr-2">📈</span> Report
+            </a>
+            <a href="/dashboard" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700 hover:text-white">
+                <span class="mr-2">📊</span> Dashboard
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="flex-1 flex flex-col min-h-screen">
+        <!-- Top Bar for mobile (hamburger menu) -->
+        <header class="bg-white shadow-sm lg:hidden flex items-center px-4 py-3 justify-between">
+            <button id="sidebar-open-btn" class="text-gray-600 hover:text-gray-900 focus:outline-none">
+                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                </svg>
+            </button>
+            <span class="text-gray-800 text-lg font-semibold">Update Request Details</span>
+            <div></div> <!-- Placeholder for right alignment -->
+        </header>
+
+        <main class="flex-1 p-6 sm:p-8 lg:p-10">
+            <div class="max-w-6xl mx-auto bg-white rounded-xl shadow-lg p-6 sm:p-8">
+                <h1 class="text-3xl font-bold text-center text-gray-900 mb-8">Update Request Details</h1>
+
+                <div id="message-box" class="message-box hidden"></div>
+                <div id="error-box" class="error-box hidden"></div>
+
+                <!-- Request Selection/Display -->
+                <div class="mb-10 p-6 border border-gray-200 rounded-lg shadow-sm bg-gray-50">
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-4 border-b pb-2">Select a Request to Update</h2>
+                    <div class="flex flex-col md:flex-row gap-4 mb-4">
+                        <select id="request-select" class="form-select flex-grow px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">-- Select Request No, Title --</option>
+                            <!-- Options populated by JS -->
+                        </select>
+                    </div>
+
+                    <div id="selected-request-details" class="mt-4 p-4 border border-gray-200 rounded-md bg-white hidden">
+                        <h3 class="text-xl font-semibold text-gray-700 mb-2">Request Details:</h3>
+                        <p><strong>Request No:</strong> <span id="display-request-no"></span></p>
+                        <p><strong>Requested By:</strong> <span id="display-requested-by"></span></p>
+                        <p><strong>Department:</strong> <span id="display-department"></span></p>
+                        <p><strong>Category:</strong> <span id="display-category"></span></p>
+                        <p><strong>Request Date:</strong> <span id="display-request-date"></span></p>
+                        <p><strong>Request Title:</strong> <span id="display-request-title"></span></p>
+                        <p><strong>Description:</strong> <span id="display-description"></span></p>
+                        <p><strong>Current Status:</strong> <span id="display-current-status"></span></p>
+                    </div>
+                </div>
+
+                <!-- Update Fields Form -->
+                <div id="update-form-section" class="mb-10 p-6 border border-gray-200 rounded-lg shadow-sm bg-gray-50 hidden">
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-4 border-b pb-2">Update Specific Details</h2>
+                    <form id="update-request-form" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <input type="hidden" id="current-request-id">
+
+                        <div>
+                            <label for="srs-sent-date" class="block text-gray-700 text-sm font-medium mb-2">SRS Sent Date:</label>
+                            <input type="date" id="srs-sent-date" name="srs_sent_date" class="form-input w-full">
+                        </div>
+                        <div>
+                            <label for="srs-approval-date" class="block text-gray-700 text-sm font-medium mb-2">SRS Approval Date:</label>
+                            <input type="date" id="srs-approval-date" name="srs_approval_date" class="form-input w-full">
+                        </div>
+                        <div>
+                            <label for="estimation-received-date" class="block text-gray-700 text-sm font-medium mb-2">Estimation Received Date:</label>
+                            <input type="date" id="estimation-received-date" name="estimation_received_date" class="form-input w-full">
+                        </div>
+                        <div>
+                            <label for="indent-sent-date" class="block text-gray-700 text-sm font-medium mb-2">Indent Sent Date:</label>
+                            <input type="date" id="indent-sent-date" name="indent_sent_date" class="form-input w-full">
+                        </div>
+                        <div>
+                            <label for="signed-indent-received-date" class="block text-gray-700 text-sm font-medium mb-2">Signed Indent Received Date:</label>
+                            <input type="date" id="signed-indent-received-date" name="signed_indent_received_date" class="form-input w-full">
+                        </div>
+                        <div>
+                            <label for="estimated-man-hours-ba" class="block text-gray-700 text-sm font-medium mb-2">Est. Man-hours BA:</label>
+                            <input type="number" id="estimated-man-hours-ba" name="estimated_man_hours_ba" class="form-input w-full">
+                        </div>
+                        <div>
+                            <label for="estimated-man-hours-dev" class="block text-gray-700 text-sm font-medium mb-2">Est. Man-hours Developers:</label>
+                            <input type="number" id="estimated-man-hours-dev" name="estimated_man_hours_dev" class="form-input w-full">
+                        </div>
+                        <div>
+                            <label for="estimated-man-hours-tester" class="block text-gray-700 text-sm font-medium mb-2">Est. Man-hours Tester:</label>
+                            <input type="number" id="estimated-man-hours-tester" name="estimated_man_hours_tester" class="form-input w-full">
+                        </div>
+                        <div>
+                            <label for="development-start-date" class="block text-gray-700 text-sm font-medium mb-2">Development Start Date:</label>
+                            <input type="date" id="development-start-date" name="development_start_date" class="form-input w-full">
+                        </div>
+                        <div>
+                            <label for="uat-mail-date" class="block text-gray-700 text-sm font-medium mb-2">UAT Mail Date:</label>
+                            <input type="date" id="uat-mail-date" name="uat_mail_date" class="form-input w-full">
+                        </div>
+                        <div>
+                            <label for="uat-confirmation-date" class="block text-gray-700 text-sm font-medium mb-2">UAT Confirmation Date:</label>
+                            <input type="date" id="uat-confirmation-date" name="uat_confirmation_date" class="form-input w-full">
+                        </div>
+                         <div class="col-span-full md:col-span-1">
+                            <label for="current-status" class="block text-gray-700 text-sm font-medium mb-2">Current Status:</label>
+                            <select id="current-status" name="current_status" class="form-select w-full">
+                                <option value="">Select Status</option>
+                                <option value="Open">Open</option>
+                                <option value="In Progress">In Progress</option>
+                                <option value="Completed">Completed</option>
+                                <option value="On Hold">On Hold</option>
+                                <option value="Cancelled">Cancelled</option>
+                            </select>
+                        </div>
+
+                        <div class="md:col-span-2 lg:col-span-3 flex justify-end gap-3 mt-4">
+                            <button type="submit" class="btn btn-primary">Update Details</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Bulk Excel Upload for Update Request -->
+                <div class="mb-10 p-6 border border-gray-200 rounded-lg shadow-sm bg-gray-50">
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-4 border-b pb-2">Bulk Update from Excel</h2>
+                    <form id="bulk-update-excel-form" class="flex flex-col sm:flex-row items-center gap-4">
+                        <input type="file" id="bulk-update-excel-file-input" accept=".xlsx, .xls" class="block w-full sm:w-auto text-sm text-gray-500
+                            file:mr-4 file:py-2 file:px-4
+                            file:rounded-full file:border-0
+                            file:text-sm file:font-semibold
+                            file:bg-blue-50 file:text-blue-700
+                            hover:file:bg-blue-100 cursor-pointer"/>
+                        <button type="submit" class="btn btn-primary">Upload Bulk Updates</button>
+                    </form>
+                    <div id="bulk-upload-message" class="message-box hidden mt-4"></div>
+                    <div id="bulk-upload-error" class="error-box hidden mt-4"></div>
+                </div>
+
+                <!-- Download Options for Update Request -->
+                <div class="mb-10 p-6 border border-gray-200 rounded-lg shadow-sm bg-gray-50">
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-4 border-b pb-2">Download Update Request Data & Template</h2>
+                    <div class="flex flex-col sm:flex-row justify-center gap-4">
+                        <button id="download-update-data-btn" class="btn btn-download">Download Existing Update Data</button>
+                        <button id="download-update-template-btn" class="btn btn-secondary">Download Update Template</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/common.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/update_request.js') }}"></script>
+</body>
+</html>

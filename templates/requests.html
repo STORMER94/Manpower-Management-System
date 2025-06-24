@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Request Master</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="font-inter antialiased text-gray-800 bg-gray-100 min-h-screen flex flex-col lg:flex-row">
+    <!-- Sidebar -->
+    <aside id="sidebar" class="bg-gray-800 text-gray-200 w-64 space-y-6 py-7 px-2 absolute inset-y-0 left-0 transform -translate-x-full lg:relative lg:translate-x-0 transition duration-200 ease-in-out z-50 shadow-lg">
+        <div class="flex items-center justify-between px-4">
+            <a href="/" class="text-white text-2xl font-bold flex items-center">
+                <svg xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-8 h-8 mr-2 text-blue-400">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 12h16.5m-16.5 0a2.25 2.25 0 0 0 2.25 2.25h12.75a2.25 2.25 0 0 0 2.25-2.25M3.75 12a2.25 2.25 0 0 1 2.25-2.25h12.75a2.25 2.25 0 0 1 2.25 2.25m-16.5 0v6.75m16.5-6.75v6.75m-16.5 0a2.25 2.25 0 0 0 2.25 2.25h12.75a2.25 2.25 0 0 0 2.25-2.25M3.75 12v-6.75m16.5 6.75v-6.75" />
+                </svg>
+                MMS
+            </a>
+            <!-- Close button for mobile -->
+            <button id="sidebar-close-btn" class="lg:hidden text-gray-400 hover:text-white focus:outline-none">
+                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+
+        <nav>
+            <a href="/stakeholders" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700 hover:text-white">
+                <span class="mr-2">📊</span> Stakeholder Master
+            </a>
+            <a href="/requests" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700 hover:text-white bg-gray-700 text-white">
+                <span class="mr-2">📝</span> Request Master
+            </a>
+            <a href="/update-request" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700 hover:text-white">
+                <span class="mr-2">✏️</span> Update Request
+            </a>
+            <a href="/update-manhours" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700 hover:text-white">
+                <span class="mr-2">⏰</span> Update Man-hours
+            </a>
+            <a href="/report" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700 hover:text-white">
+                <span class="mr-2">📈</span> Report
+            </a>
+            <a href="/dashboard" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700 hover:text-white">
+                <span class="mr-2">📊</span> Dashboard
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="flex-1 flex flex-col min-h-screen">
+        <!-- Top Bar for mobile (hamburger menu) -->
+        <header class="bg-white shadow-sm lg:hidden flex items-center px-4 py-3 justify-between">
+            <button id="sidebar-open-btn" class="text-gray-600 hover:text-gray-900 focus:outline-none">
+                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                </svg>
+            </button>
+            <span class="text-gray-800 text-lg font-semibold">Request Master</span>
+            <div></div> <!-- Placeholder for right alignment -->
+        </header>
+
+        <main class="flex-1 p-6 sm:p-8 lg:p-10">
+            <div class="max-w-6xl mx-auto bg-white rounded-xl shadow-lg p-6 sm:p-8">
+                <h1 class="text-3xl font-bold text-center text-gray-900 mb-8">Request Master</h1>
+
+                <div id="message-box" class="message-box hidden"></div>
+                <div id="error-box" class="error-box hidden"></div>
+
+                <!-- Add Request Form -->
+                <div class="mb-10 p-6 border border-gray-200 rounded-lg shadow-sm bg-gray-50">
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-4 border-b pb-2">Add/Edit Request</h2>
+                    <form id="request-form" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <input type="hidden" id="request-id">
+                        <div>
+                            <label for="request-no" class="block text-gray-700 text-sm font-medium mb-2">Request No:</label>
+                            <input type="text" id="request-no" name="request_no" required class="form-input w-full">
+                        </div>
+                        <div>
+                            <label for="requested-by" class="block text-gray-700 text-sm font-medium mb-2">Requested By:</label>
+                            <input type="text" id="requested-by" name="requested_by" required class="form-input w-full">
+                        </div>
+                        <div>
+                            <label for="department" class="block text-gray-700 text-sm font-medium mb-2">Department:</label>
+                            <input type="text" id="department" name="department" required class="form-input w-full">
+                        </div>
+                        <div>
+                            <label for="category" class="block text-gray-700 text-sm font-medium mb-2">Category:</label>
+                            <input type="text" id="category" name="category" required class="form-input w-full">
+                        </div>
+                        <div>
+                            <label for="request-date" class="block text-gray-700 text-sm font-medium mb-2">Request Date:</label>
+                            <input type="date" id="request-date" name="request_date" required class="form-input w-full">
+                        </div>
+                        <div>
+                            <label for="request-title" class="block text-gray-700 text-sm font-medium mb-2">Request Title:</label>
+                            <input type="text" id="request-title" name="request_title" required class="form-input w-full">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label for="description" class="block text-gray-700 text-sm font-medium mb-2">Description (Optional):</label>
+                            <textarea id="description" name="description" rows="3" class="form-textarea w-full"></textarea>
+                        </div>
+                        <div class="md:col-span-2 flex justify-end gap-3 mt-4">
+                            <button type="submit" class="btn btn-primary">Add Request</button>
+                            <button type="button" id="cancel-request-edit-btn" class="btn btn-secondary hidden">Cancel Edit</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Excel Upload for Requests -->
+                <div class="mb-10 p-6 border border-gray-200 rounded-lg shadow-sm bg-gray-50">
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-4 border-b pb-2">Upload Requests from Excel</h2>
+                    <form id="excel-upload-form" class="flex flex-col sm:flex-row items-center gap-4">
+                        <input type="file" id="excel-file-input" accept=".xlsx, .xls" class="block w-full sm:w-auto text-sm text-gray-500
+                            file:mr-4 file:py-2 file:px-4
+                            file:rounded-full file:border-0
+                            file:text-sm file:font-semibold
+                            file:bg-blue-50 file:text-blue-700
+                            hover:file:bg-blue-100 cursor-pointer"/>
+                        <button type="submit" class="btn btn-primary">Upload Excel</button>
+                    </form>
+                    <div id="excel-upload-message" class="message-box hidden mt-4"></div>
+                    <div id="excel-upload-error" class="error-box hidden mt-4"></div>
+                </div>
+
+                <!-- Download Options for Requests -->
+                <div class="mb-10 p-6 border border-gray-200 rounded-lg shadow-sm bg-gray-50">
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-4 border-b pb-2">Download Request Data & Template</h2>
+                    <div class="flex flex-col sm:flex-row justify-center gap-4">
+                        <button id="download-requests-data-btn" class="btn btn-download">Download All Requests Data</button>
+                        <button id="download-requests-template-btn" class="btn btn-secondary">Download Template</button>
+                    </div>
+                </div>
+
+                <!-- Requests List -->
+                <div class="p-6 border border-gray-200 rounded-lg shadow-sm bg-gray-50">
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-4 border-b pb-2">Existing Requests</h2>
+                    <div class="overflow-x-auto rounded-md border border-gray-200">
+                        <table class="min-w-full bg-white">
+                            <thead class="bg-gray-100">
+                                <tr>
+                                    <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">Request No</th>
+                                    <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">Requested By</th>
+                                    <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">Department</th>
+                                    <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">Category</th>
+                                    <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">Request Date</th>
+                                    <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">Request Title</th>
+                                    <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="requests-list" class="divide-y divide-gray-200">
+                                <!-- Requests will be loaded here by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <p id="no-requests-message" class="text-center text-gray-500 mt-6 hidden p-4 bg-white rounded-md">No requests found.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/common.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/requests.js') }}"></script>
+</body>
+</html>

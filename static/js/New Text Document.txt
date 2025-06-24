@@ -1,0 +1,16 @@
+document.addEventListener('DOMContentLoaded', () => {
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOpenBtn = document.getElementById('sidebar-open-btn');
+    const sidebarCloseBtn = document.getElementById('sidebar-close-btn');
+
+    if (sidebarOpenBtn) {
+        sidebarOpenBtn.addEventListener('click', () => {
+            sidebar.classList.remove('-translate-x-full');
+        });
+    }
+    if (sidebarCloseBtn) {
+        sidebarCloseBtn.addEventListener('click', () => {
+            sidebar.classList.add('-translate-x-full');
+        });
+    }
+});
